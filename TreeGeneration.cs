@@ -27,8 +27,8 @@ public class TreeGeneration : MonoBehaviour
 
         for (int i = -fogX; i < fogX; i++) {
             for(int j = -fogZ; j < fogZ; j++) {
-                
-                if(-8<i && i < 8 && -8 < j && j < 8) {continue; } // don't instantiate trees too close to the user
+                float treeDistance = Vector2.Distance(new Vector2(i, j), new Vector2(0f, 0f));
+                if(treeDistance<80) { continue; } // don't instantiate trees too close to the user
 
                 float iF = (i + fogX);
                 float jF = (j + fogZ);
@@ -45,10 +45,10 @@ public class TreeGeneration : MonoBehaviour
                     Material mat = tree.GetComponent<Renderer>().material;
                     Color tempColor = mat.color;
 
-                    float distanceEffect = Vector2.Distance(new Vector2(i, j), new Vector2(0f, 0f))/ maxD; 
-                    tempColor.a = (1-distanceEffect)*1.5f; // amplified slightly, can expose to inspector
+                    float distanceEffect = treeDistance / maxD; 
+                    tempColor.a = (.8f-distanceEffect); // amplified slightly, can expose to inspector
 
-                    float whitout = .1f + distanceEffect * .8f;
+                    float whitout = .3f + distanceEffect * .8f;
                     if(whitout > .7f) {
                         whitout = .7f;
                     }
@@ -57,7 +57,28 @@ public class TreeGeneration : MonoBehaviour
                     tempColor.b = whitout;
 
 
+                    // Use Radius of maxD
+                    // See if we can check if a 2D point is within a specific arc
+                    double angle = Mathf.Atan2(i, j) * 180.0 / Mathf.PI;
+
+                    if(-30<angle && angle <30) { // 4
+                        Debug.Log(Mathf.Atan2(i, j) * 180.0 / Mathf.PI);
+                        tempColor.b = 0;
+                        tempColor.g = 0;
+                    }
+
+                    if(30 < angle && angle < 90) { //5
+                        Debug.Log(Mathf.Atan2(i, j) * 180.0 / Mathf.PI);
+                        tempColor.b = 1;
+                        tempColor.g = 1;
+                    }
+                    if(90 < angle && angle < 150) { //0
+                        Debug.Log(Mathf.Atan2(i, j) * 180.0 / Mathf.PI);
+                        tempColor.r = 1;
+                        tempColor.g = 1;
+                    }
                     mat.color = tempColor;
+
                 }
             }
         }
