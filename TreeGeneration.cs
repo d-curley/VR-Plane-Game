@@ -68,26 +68,26 @@ public class TreeGeneration : MonoBehaviour
                     // See if we can check if a 2D point is within a specific arc
                     double angle = Mathf.Atan2(i, j) * 180.0 / Mathf.PI;
 
-                    TreeSections[SectionView(angle)].Add(tree);
+                    TreeSections[TreeSection(angle)].Add(tree);
                 }
             }
         }
     }
 
-    public int SectionView(double viewAngle) {
+    public int TreeSection(double angle) {
         int section = 0;
         
-        if(-30 < viewAngle && viewAngle <= 30) { // 4
+        if(-30 < angle && angle < 30) { // 4
             section = 1;
-        } else if(30 < viewAngle && viewAngle <= 90) { //5
+        } else if(30 < angle && angle < 90) { //5
             section = 0;
-        } else if(90 < viewAngle && viewAngle <= 150) { //0
+        } else if(90 < angle && angle < 150) { //0
             section = 5;
-        } else if(150 < viewAngle && viewAngle <= 210) { //1
+        } else if(150 < angle && angle < 210) { //1
             section = 4;
-        } else if(210 < viewAngle && viewAngle <= 270) { //2
+        } else if(-150 < angle && angle < -90) { //2
             section = 3;
-        } else if(270 < viewAngle && viewAngle <= 330) { //3
+        } else if(-90 < angle && angle < -30) { //3
             section = 2;
         }
         return section;

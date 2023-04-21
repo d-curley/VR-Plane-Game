@@ -34,6 +34,8 @@ public class GestureControl : MonoBehaviour
     [SerializeField]
     private GameObject[] fogSections= new GameObject[6];
 
+    private bool[] sectionColored= new bool[6];
+
 
     // Start is called before the first frame update
     void Start()
@@ -51,11 +53,17 @@ public class GestureControl : MonoBehaviour
 
         r_Hand.TryGetFeatureValue(CommonUsages.triggerButton, out r_grip);
         if(r_grip) {
-            int section = trees.SectionView(cameraTransform.rotation.eulerAngles.y);
-            Debug.Log(section);
-            foreach(GameObject tree in treeSections[section]) {
-                tree.GetComponent<Renderer>().material.color = Color.red;
-            }
+            int section = FogSection(cameraTransform.rotation.eulerAngles.y);
+
+            if(!sectionColored[section]) {
+                fogSections[section].GetComponent<ParticleSystem>().startColor = Color.red;
+                Debug.Log(section);
+                foreach(GameObject tree in treeSections[section]) {
+                    tree.GetComponent<Renderer>().material.color = Color.red;
+                }
+                sectionColored[section] = true;
+            } 
+            
         }
 
 
@@ -80,7 +88,24 @@ public class GestureControl : MonoBehaviour
         float lPitch = leftHand.rotation.eulerAngles.z;
         */
     }
+    public int FogSection(double viewAngle) {
+        int section = 0;
 
+        if(-30 < viewAngle && viewAngle < 30) { // 4
+            section = 1;
+        } else if(30 < viewAngle && viewAngle < 90) { //5
+            section = 0;
+        } else if(90 < viewAngle && viewAngle < 150) { //0
+            section = 5;
+        } else if(150 < viewAngle && viewAngle < 210) { //1
+            section = 4;
+        } else if(210 < viewAngle && viewAngle < 270) { //2
+            section = 3;
+        } else if(270 < viewAngle && viewAngle < 330) { //3
+            section = 2;
+        }
+        return section;
+    }
     void refreshDevices() {
         var inputDevices = new List<UnityEngine.XR.InputDevice>();
         UnityEngine.XR.InputDevices.GetDevices(inputDevices);
