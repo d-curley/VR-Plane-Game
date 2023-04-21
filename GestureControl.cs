@@ -24,10 +24,21 @@ public class GestureControl : MonoBehaviour
     private bool gesture2 = false;
     private bool gesture3 = false;
 
+    [SerializeField]
+    private TreeGeneration trees;
+    public List<GameObject>[] treeSections;
+
+    [SerializeField]
+    private Transform cameraTransform;
+
+    [SerializeField]
+    private GameObject[] fogSections= new GameObject[6];
+
 
     // Start is called before the first frame update
     void Start()
     {
+        treeSections = trees.TreeSections;
     }
 
     // Update is called once per frame
@@ -37,8 +48,20 @@ public class GestureControl : MonoBehaviour
             refreshDevices();
         }
 
+
+        r_Hand.TryGetFeatureValue(CommonUsages.triggerButton, out r_grip);
+        if(r_grip) {
+            int section = trees.SectionView(cameraTransform.rotation.eulerAngles.y);
+            Debug.Log(section);
+            foreach(GameObject tree in treeSections[section]) {
+                tree.GetComponent<Renderer>().material.color = Color.red;
+            }
+        }
+
+
+        /*
         //l_Hand.TryGetFeatureValue(CommonUsages.deviceVelocity, out l_Velocity);
-        //r_Hand.TryGetFeatureValue(CommonUsages.triggerButton, out r_grip);
+        //
         Debug.Log(rightHand.transform.localPosition);// local position just bakes in a comparison to the position of the parent.  
 
         if(r_grip){// && !gestureStarted) {
@@ -48,12 +71,9 @@ public class GestureControl : MonoBehaviour
             
         }
 
-        if(gestureStarted) {
-            //
-        }
         
 
-        /*
+        
         float yaw = leftHand.position.y - rightHand.position.y;
         l_Hand.TryGetFeatureValue(CommonUsages.primaryButton, out pitch_L);
         r_Hand.TryGetFeatureValue(CommonUsages.primaryButton, out pitch_R);

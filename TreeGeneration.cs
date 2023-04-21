@@ -10,10 +10,15 @@ public class TreeGeneration : MonoBehaviour
     public int fogX = 150;
     public int fogZ = 150;
     public float perlinNoiseThreshold = .85f;
-    
 
+    public List<GameObject>[] TreeSections = new List<GameObject>[6];
+    
     void Start()
     {
+
+        for(int i = 0; i < TreeSections.Length; i++) {
+            TreeSections[i] = new List<GameObject>();
+        }
         // look up proc placement script
         // something like choosing x and z between -50 and 50
         // could theoretically make it self away and look for proximity to other trees?
@@ -56,31 +61,35 @@ public class TreeGeneration : MonoBehaviour
                     tempColor.g = whitout;
                     tempColor.b = whitout;
 
+                    mat.color = tempColor;
+
 
                     // Use Radius of maxD
                     // See if we can check if a 2D point is within a specific arc
                     double angle = Mathf.Atan2(i, j) * 180.0 / Mathf.PI;
 
-                    if(-30<angle && angle <30) { // 4
-                        Debug.Log(Mathf.Atan2(i, j) * 180.0 / Mathf.PI);
-                        tempColor.b = 0;
-                        tempColor.g = 0;
-                    }
-
-                    if(30 < angle && angle < 90) { //5
-                        Debug.Log(Mathf.Atan2(i, j) * 180.0 / Mathf.PI);
-                        tempColor.b = 1;
-                        tempColor.g = 1;
-                    }
-                    if(90 < angle && angle < 150) { //0
-                        Debug.Log(Mathf.Atan2(i, j) * 180.0 / Mathf.PI);
-                        tempColor.r = 1;
-                        tempColor.g = 1;
-                    }
-                    mat.color = tempColor;
-
+                    TreeSections[SectionView(angle)].Add(tree);
                 }
             }
         }
+    }
+
+    public int SectionView(double viewAngle) {
+        int section = 0;
+        
+        if(-30 < viewAngle && viewAngle <= 30) { // 4
+            section = 1;
+        } else if(30 < viewAngle && viewAngle <= 90) { //5
+            section = 0;
+        } else if(90 < viewAngle && viewAngle <= 150) { //0
+            section = 5;
+        } else if(150 < viewAngle && viewAngle <= 210) { //1
+            section = 4;
+        } else if(210 < viewAngle && viewAngle <= 270) { //2
+            section = 3;
+        } else if(270 < viewAngle && viewAngle <= 330) { //3
+            section = 2;
+        }
+        return section;
     }
 }
